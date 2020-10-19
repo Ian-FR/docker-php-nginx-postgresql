@@ -1,0 +1,75 @@
+#!/bin/sh
+
+##
+# start PostgreSQL DB data
+#
+su - postgres -c "initdb -D /var/lib/postgresql/data"
+
+##
+# configure postgreSQL connections
+#
+cat /var/lib/postgresql/data/postgresql.conf | grep "#listen_addresses = 'localhost'"
+X=$?
+if [ "$X" -eq "0" ]; then
+
+    su - postgres -c "echo \"host all all all md5\" >> /var/lib/postgresql/data/pg_hba.conf"
+
+    su - postgres -c "sed -i \"s/#listen_addresses = 'localhost'/listen_addresses = '*'/\" /var/lib/postgresql/data/postgresql.conf"
+
+fi
+
+##
+# start postgreSQL and alter default postgres password
+#
+su - postgres -c 'pg_ctl -D /var/lib/postgresql/data -w start'
+psql -U postgres --command "ALTER USER postgres WITH ENCRYPTED PASSWORD 'postgres';"
+
+##
+# create PG_USER
+#
+psql -U $PG_USER
+Y=$?
+if [ "$Y" -ne "0" ]; then
+
+    psql -U postgres --command "CREATE USER $PG_USER WITH SUPERUSER ENCRYPTED PASSWORD '$PG_PASS';"
+
+fi
+
+##
+# create PG_DB
+#
+psql $PG_DB -U $PG_USER
+Z=$?
+if [ "$Z" -ne "0" ]; then
+
+    psql -U postgres --command "CREATE DATABASE $PG_DB;"
+
+    psql -U postgres --command "GRANT ALL PRIVILEGES ON DATABASE $PG_DB TO $PG_USER;"
+
+fi
+
+##
+# configure default nginx server
+#
+DIR_APP=${DIR_APP////\\/}
+sed -i "s/VHOST/$SERVER_NAME/" /etc/nginx/nginx.conf
+sed -i "s/DIRAPP/$DIR_APP/" /etc/nginx/nginx.conf
+
+##
+# configure xdebug
+#
+sed -i "s/XDEBUG_HOST/$XDEBUG_HOST/" /etc/php7/conf.d/custom_xdebug.ini
+sed -i "s/XDEBUG_PORT/$XDEBUG_PORT/" /etc/php7/conf.d/custom_xdebug.ini
+sed -i "s/XDEBUG_IDE_KEY/$XDEBUG_IDE_KEY/" /etc/php7/conf.d/custom_xdebug.ini
+
+##
+# start php and nginx
+#
+php-fpm7
+nginx
+
+##
+# run composer
+#
+composer install
+composer dump-autoload
