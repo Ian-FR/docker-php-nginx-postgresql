@@ -25,7 +25,7 @@ pg_ctl start -D /var/lib/postgresql/data
 ##
 # create PG_USER
 #
-if [ "Spsql -U postgres -c '\du' | awk '/$PG_USER/ { print $1 }')" = "$PG_USER" ]; then
+if [ ! "psql -U postgres -c '\du' | awk '/$PG_USER/ { print $1 }'" = "" ]; then
 
     psql -U postgres -c "CREATE USER $PG_USER WITH SUPERUSER ENCRYPTED PASSWORD '$PG_PASS';"
     
@@ -34,7 +34,7 @@ fi
 ##
 # create PG_DB
 #
-if [ "$(psql -U postgres -t -c "select datname from pg_database" | awk '/$PG_DB/ { print $1 }')" = "$PG_DB" ]; then
+if [ "psql -U postgres -t -c "select datname from pg_database" | awk '/$PG_DB/ { print $1 }'" = "" ]; then
 
     psql -U postgres -c "CREATE DATABASE $PG_DB;"
 
