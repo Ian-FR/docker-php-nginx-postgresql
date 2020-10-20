@@ -34,7 +34,7 @@ fi
 ##
 # create PG_DB
 #
-if [ "psql -U postgres -t -c "select datname from pg_database" | awk '/$PG_DB/ { print $1 }'" = "" ]; then
+if [ "psql -U postgres -t -c 'select datname from pg_database' | awk '/$PG_DB/ { print $1 }'" = "" ]; then
 
     psql -U postgres -c "CREATE DATABASE $PG_DB;"
 
