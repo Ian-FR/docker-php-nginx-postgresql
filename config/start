@@ -1,50 +1,44 @@
 #!/bin/sh
 
 ##
-# start PostgreSQL DB data
+# init PostgreSQL data when not exists
 #
-su - postgres -c "initdb -D /var/lib/postgresql/data"
+if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
 
-##
-# configure postgreSQL connections
-#
-cat /var/lib/postgresql/data/postgresql.conf | grep "#listen_addresses = 'localhost'"
-X=$?
-if [ "$X" -eq "0" ]; then
+    echo "postgres" > /var/lib/postgresql/pg.pass
+    
+    initdb -D /var/lib/postgresql/data --username=postgres --pwfile=/var/lib/postgresql/pg.pass
 
-    su - postgres -c "echo \"host all all all md5\" >> /var/lib/postgresql/data/pg_hba.conf"
+    rm /var/lib/postgresql/pg.pass
 
-    su - postgres -c "sed -i \"s/#listen_addresses = 'localhost'/listen_addresses = '*'/\" /var/lib/postgresql/data/postgresql.conf"
+    echo "host all all all md5" >> /var/lib/postgresql/data/pg_hba.conf
+
+    sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /var/lib/postgresql/data/postgresql.conf
 
 fi
 
 ##
 # start postgreSQL and alter default postgres password
 #
-su - postgres -c 'pg_ctl -D /var/lib/postgresql/data -w start'
-psql -U postgres --command "ALTER USER postgres WITH ENCRYPTED PASSWORD 'postgres';"
+pg_ctl start -D /var/lib/postgresql/data
 
 ##
 # create PG_USER
 #
-psql -U $PG_USER
-Y=$?
-if [ "$Y" -ne "0" ]; then
+if [ "Spsql -U postgres -c '\du' | awk '/$PG_USER/ { print $1 }')" = "$PG_USER" ]; then
 
-    psql -U postgres --command "CREATE USER $PG_USER WITH SUPERUSER ENCRYPTED PASSWORD '$PG_PASS';"
-
+    psql -U postgres -c "CREATE USER $PG_USER WITH SUPERUSER ENCRYPTED PASSWORD '$PG_PASS';"
+    
 fi
 
 ##
 # create PG_DB
 #
-psql $PG_DB -U $PG_USER
-Z=$?
-if [ "$Z" -ne "0" ]; then
+if [ "$(psql -U postgres -t -c "select datname from pg_database" | awk '/$PG_DB/ { print $1 }')" = "$PG_DB" ]; then
 
-    psql -U postgres --command "CREATE DATABASE $PG_DB;"
+    psql -U postgres -c "CREATE DATABASE $PG_DB;"
 
-    psql -U postgres --command "GRANT ALL PRIVILEGES ON DATABASE $PG_DB TO $PG_USER;"
+    psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE $PG_DB TO $PG_USER;"
 
 fi
 
@@ -52,6 +46,7 @@ fi
 # configure default nginx server
 #
 DIR_APP=${DIR_APP////\\/}
+
 sed -i "s/VHOST/$SERVER_NAME/" /etc/nginx/nginx.conf
 sed -i "s/DIRAPP/$DIR_APP/" /etc/nginx/nginx.conf
 
@@ -63,13 +58,13 @@ sed -i "s/XDEBUG_PORT/$XDEBUG_PORT/" /etc/php7/conf.d/custom_xdebug.ini
 sed -i "s/XDEBUG_IDE_KEY/$XDEBUG_IDE_KEY/" /etc/php7/conf.d/custom_xdebug.ini
 
 ##
+# disable user and group php-fpm diretives
+#
+sed -i "s/user = nobody/;user = nobody/" /etc/php7/php-fpm.d/www.conf
+sed -i "s/group = nobody/;group = nobody/" /etc/php7/php-fpm.d/www.conf
+
+##
 # start php and nginx
 #
 php-fpm7
 nginx
-
-##
-# run composer
-#
-composer install
-composer dump-autoload

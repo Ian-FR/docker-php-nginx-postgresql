@@ -35,28 +35,31 @@ RUN apk update && \
     mkdir -p /run/postgresql && \
     mkdir -p /var/lib/postgresql/data
 
-WORKDIR /var/app
-
+COPY ./config/start /bin/start-server
 COPY ./config/nginx.conf /etc/nginx/nginx.conf
 COPY ./config/php.ini /etc/php7/conf.d/custom_php.ini
 COPY ./config/xdebug.ini /etc/php7/conf.d/custom_xdebug.ini
-COPY ./config/start /bin/start-server
 COPY ./src /var/app
+
+RUN addgroup -S -g 1000 www && \
+    adduser -S -u 1000 -G www -D www && \
+    chmod +x /bin/start-server && \
+    chown -R www:www /bin/start-server && \
+    chown -R www:www /etc/nginx && \
+    chown -R www:www /etc/php7 && \
+    chown -R www:www /var/app && \
+    chown -R www:www /var/lib/nginx && \
+    chown -R www:www /var/lib/php7 && \
+    chown -R www:www /var/lib/postgresql && \
+    chown -R www:www /var/log && \
+    chown -R www:www /run/nginx && \
+    chown -R www:www /run/postgresql
 
 VOLUME [ "/var/lib/postgresql/data" ]
 
-RUN chmod +x /bin/start-server && \
-    chown -R nobody:nobody /var/app && \
-    chown -R nobody:nobody /var/lib/nginx && \
-    chown -R nobody:nobody /var/lib/php7 && \
-    chown -R nobody:nobody /var/log && \
-    chown -R nobody:nobody /etc/nginx && \
-    chown -R nobody:nobody /bin/start-server && \
-    chown -R nobody:nobody /run/nginx && \
-    chown -R postgres:postgres /run/postgresql && \
-    chown -R postgres:postgres /var/lib/postgresql/data
+WORKDIR /var/app
 
-# USER nobody
+USER www
 
 EXPOSE 80 5432
 

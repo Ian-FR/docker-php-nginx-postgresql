@@ -84,7 +84,5 @@ docker exec -it web-server php -v
 docker exec -it web-server postgres --version
 docker exec -it web-server psql -U postgres
 docker exec -it web-server psql dbname pguser
-docker exec -it web-server composer dump-autoload
+docker exec -it web-server composer install
 ```
-
-Obs.: The composer runs at container startup on the default app's workdir to automatically install the project's dependencies
