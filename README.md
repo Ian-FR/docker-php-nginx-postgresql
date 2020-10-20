@@ -83,6 +83,6 @@ The services will be able to use on container console, but you can use them with
 docker exec -it web-server php -v
 docker exec -it web-server postgres --version
 docker exec -it web-server psql -U postgres
-docker exec -it web-server psql dbname pguser
+docker exec -it web-server psql <dbname> <pguser>
 docker exec -it web-server composer install
 ```
