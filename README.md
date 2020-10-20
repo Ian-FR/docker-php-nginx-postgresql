@@ -27,7 +27,7 @@ This Docker configuration allows you to easily run PHP 7.4, Nginx 1.18.0, Postgr
 └── README.md
 ```
 
-## How to use it
+## How to use
 
 - You need to have a `.env` file set up, so rename .env-example to .env open it and configure
 
