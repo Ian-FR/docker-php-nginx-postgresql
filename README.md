@@ -1,6 +1,6 @@
 # Web Server Dockerized ( NGINX + PHP-FPM + PostgreSQL )
 
-A single container to run PHP using the NGINX - PHP-FPM - PostgrSQL stack. In addition having the composer and xdebug already installed
+:zap: :coffee: A single Docker container configured to run PHP aplications over the NGINX + PHP-FPM + PostgreSQL stack. In addition having the composer and xdebug already installed
 
 ## Overview
 
