@@ -39,7 +39,6 @@ COPY ./config/start /bin/start-server
 COPY ./config/nginx.conf /etc/nginx/nginx.conf
 COPY ./config/php.ini /etc/php7/conf.d/custom_php.ini
 COPY ./config/xdebug.ini /etc/php7/conf.d/custom_xdebug.ini
-COPY ./src /var/app
 
 RUN addgroup -S -g 1000 www && \
     adduser -S -u 1000 -G www -D www && \
@@ -54,6 +53,8 @@ RUN addgroup -S -g 1000 www && \
     chown -R www:www /var/log && \
     chown -R www:www /run/nginx && \
     chown -R www:www /run/postgresql
+
+ADD --chown=www:www ./src /var/app
 
 VOLUME [ "/var/lib/postgresql/data" ]
 
