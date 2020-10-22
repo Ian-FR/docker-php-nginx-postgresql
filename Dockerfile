@@ -67,8 +67,6 @@ WORKDIR /var/projects/api
 
 USER www
 
-EXPOSE 80 5432
-
 VOLUME [ "/var/lib/postgresql/data" ]
 
 ENTRYPOINT [ "start-server" ]
