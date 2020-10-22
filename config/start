@@ -3,6 +3,9 @@
 ##
 # init PostgreSQL data when not exists
 #
+echo "#####"
+echo "#"
+echo "# Initializing PostgreSQL data and set up host connections ..."
 if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
 
     echo "postgres" > /var/lib/postgresql/pg.pass
@@ -25,6 +28,9 @@ pg_ctl start -D /var/lib/postgresql/data
 ##
 # create DB_USERNAME
 #
+echo "#####"
+echo "#"
+echo "Checking PostgreSQL user ..."
 if [ "psql -U postgres -c '\du' | awk '/$DB_USERNAME/ { print $1 }'" != "$DB_USERNAME" ]; then
 
     psql -U postgres -c "CREATE USER $DB_USERNAME WITH SUPERUSER ENCRYPTED PASSWORD '$DB_PASSWORD';"
@@ -34,6 +40,9 @@ fi
 ##
 # create DB_DATABASE
 #
+echo "#####"
+echo "#"
+echo "Checking PostgreSQL database ..."
 if [ "psql -U postgres -t -c 'select datname from pg_database' | awk '/$DB_DATABASE/ { print $1 }'" != "$DB_DATABASE" ]; then
 
     psql -U postgres -c "CREATE DATABASE $DB_DATABASE;"
@@ -45,18 +54,36 @@ fi
 ##
 # configure nginx servers
 #
+echo "#####"
+echo "#"
+echo "# Setting up nginx servers ..."
 sed -i "s/HOST_API/$HOST_API/" /etc/nginx/nginx.conf
 sed -i "s/HOST_APP/$HOST_APP/" /etc/nginx/nginx.conf
 
 ##
 # configure xdebug
 #
+echo "#####"
+echo "#"
+echo "# Setting up Xdebug ..."
 sed -i "s/XDEBUG_HOST/$XDEBUG_HOST/" /etc/php7/conf.d/custom_xdebug.ini
 sed -i "s/XDEBUG_PORT/$XDEBUG_PORT/" /etc/php7/conf.d/custom_xdebug.ini
 sed -i "s/XDEBUG_IDE_KEY/$XDEBUG_IDE_KEY/" /etc/php7/conf.d/custom_xdebug.ini
 
 ##
-# start php and nginx
+# start php-fpm
 #
 php-fpm7
+
+
+##
+# run compose
+#
+if [ ! -d /var/projects/api/vendor ]; then
+    composer install
+fi
+
+##
+# start nginx
+#
 nginx
