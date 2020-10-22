@@ -39,9 +39,9 @@ Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para
 
 - `HOST_APP_DIR` - Diretório local onde está localizado sua aplicação estático / frontend
 
-- `HOST_NGINX_PORT` - Porta local que será redirecionada para a porta 8080 do container ( é utilizado um usuário sem privilégios de root no container, por isso o nginx não pode usar a porta 8080 ao invés da pora 80 )
+- `HOST_NGINX_PORT` - Porta local que será redirecionada para a porta 8080 do container ( é utilizado um usuário sem privilégios de root no container, por isso o nginx não pode usar a porta 8080 ao invés da pora 80 ) - Opcional pois o padrão será 80
 
-- `HOST_PG_PORT` - Porta local que será redirecionada para a porta 5432 do container ( PostgreSQL )
+- `HOST_PG_PORT` - Porta local que será redirecionada para a porta 5432 do container ( PostgreSQL ) - Opcional pois o padrão será 5432
 
 - `XDEBUG_HOST` - Host remoto que o xdebug escutará ( Geralmente o IPv4 do computador local, mas no windows será mais cômodo usar o IP fixo do adaptador de rede padrão usado pelo Hyper-V )
 
