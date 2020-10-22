@@ -21,8 +21,8 @@ Você pode usar essa configuração Docker, como ambiente base no desenvolviment
 │   └── index.php
 │
 ├── .env-example
+├── .gitignore
 ├── Dockerfile
-├── README-US.md
 ├── README.md
 └── docker-compose.yaml-example
 ```
@@ -84,7 +84,7 @@ Acessando o localhost em seu navegador ou o IP 127.0.0.1 já deverá ser possív
 Um exemplo seria o comando a baixo:
 
 ```
-docker run -d --env-file .env -v ~/path/to/api-code-base:/var/projects/api -v ~/path/to/app-code-base:/var/projects/app -p 80:8080 -p 5432:5432--name web-server web-server:stable
+docker run -d --env-file .env -v ~/path/to/api-code-base:/var/projects/api -v ~/path/to/app-code-base:/var/projects/app -p 80:8080 -p 5432:5432 --name web-server web-server:stable
 ```
 
 Note que agora estou passando dois diretórios com a flag -v que vai usar o conteúdo do diretório local no diretório remoto do container informado depois do `:`. Além disso também estou usando a flag -p para informar que a porta 5432 local deve ser redirecionada para a porta 5432 remota do container, isso é necessário quando utilizar um SGBD como o PgAdmin 4 para manipular o banco de dados localmente.
