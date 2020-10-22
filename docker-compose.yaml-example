@@ -1,14 +1,14 @@
 version: "3.8"
 services:
-  WEB-SERVER-LEPP:
+  LEPP:
     container_name: web-server
     build: .
-    image: linux-nginx-php-postgresql:stable
+    image: docker-lepp:stable
     env_file:
       - .env
     volumes:
-      - ${HOST_API_DIR}e:/var/projects/api/public
+      - ${HOST_API_DIR}:/var/projects/api/public
       - ${HOST_APP_DIR}:/var/projects/app
     ports:
-      - "${HOST_NGINX_PORT}:8080"
-      - "${HOST_PG_PORT}:5432"
+      - "${HOST_NGINX_PORT:-80}:8080"
+      - "${HOST_PG_PORT:-5432}:5432"
