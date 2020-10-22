@@ -28,12 +28,16 @@ RUN apk update && \
     apk add --no-cache $PACKAGES && \
     mv /etc/php7/conf.d/xdebug.ini /etc/php7/conf.d/00_xdebug.ini && \
     sed -i "s/;zend/zend/" /etc/php7/conf.d/00_xdebug.ini && \
+    sed -i "s/user = nobody/;user = nobody/" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s/group = nobody/;group = nobody/" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s/127.0.0.1:9000/\/run\/php7\/php-fpm.sock/" /etc/php7/php-fpm.d/www.conf && \
     rm /etc/nginx/conf.d/default.conf && \
     rm -rf /var/cache/apk/* && \
-    mkdir -p /var/app && \
     mkdir -p /run/nginx && \
+    mkdir -p /run/php7 && \
     mkdir -p /run/postgresql && \
-    mkdir -p /var/lib/postgresql/data
+    mkdir -p /var/lib/postgresql/data && \
+    mkdir -p /var/projects
 
 COPY ./config/start /bin/start-server
 COPY ./config/nginx.conf /etc/nginx/nginx.conf
@@ -46,22 +50,25 @@ RUN addgroup -S -g 1000 www && \
     chown -R www:www /bin/start-server && \
     chown -R www:www /etc/nginx && \
     chown -R www:www /etc/php7 && \
-    chown -R www:www /var/app && \
+    chown -R www:www /var/projects && \
     chown -R www:www /var/lib/nginx && \
     chown -R www:www /var/lib/php7 && \
     chown -R www:www /var/lib/postgresql && \
     chown -R www:www /var/log && \
     chown -R www:www /run/nginx && \
+    chown -R www:www /run/php7 && \
     chown -R www:www /run/postgresql
 
-ADD --chown=www:www ./src /var/app
+ADD --chown=www:www ./src/*.php /var/projects/api/
+ADD --chown=www:www ./src/*.html /var/projects/app/
+ADD --chown=www:www ./src/*.php /var/projects/phpinfo/
 
-VOLUME [ "/var/lib/postgresql/data" ]
-
-WORKDIR /var/app
+WORKDIR /var/projects/api
 
 USER www
 
 EXPOSE 80 5432
+
+VOLUME [ "/var/lib/postgresql/data" ]
 
 ENTRYPOINT [ "start-server" ]
