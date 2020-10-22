@@ -23,32 +23,30 @@ fi
 pg_ctl start -D /var/lib/postgresql/data
 
 ##
-# create PG_USER
+# create DB_USERNAME
 #
-if [ "psql -U postgres -c '\du' | awk '/$PG_USER/ { print $1 }'" != "$PG_USER" ]; then
+if [ "psql -U postgres -c '\du' | awk '/$DB_USERNAME/ { print $1 }'" != "$DB_USERNAME" ]; then
 
-    psql -U postgres -c "CREATE USER $PG_USER WITH SUPERUSER ENCRYPTED PASSWORD '$PG_PASS';"
+    psql -U postgres -c "CREATE USER $DB_USERNAME WITH SUPERUSER ENCRYPTED PASSWORD '$DB_PASSWORD';"
     
 fi
 
 ##
-# create PG_DB
+# create DB_DATABASE
 #
-if [ "psql -U postgres -t -c 'select datname from pg_database' | awk '/$PG_DB/ { print $1 }'" != "$PG_DB" ]; then
+if [ "psql -U postgres -t -c 'select datname from pg_database' | awk '/$DB_DATABASE/ { print $1 }'" != "$DB_DATABASE" ]; then
 
-    psql -U postgres -c "CREATE DATABASE $PG_DB;"
+    psql -U postgres -c "CREATE DATABASE $DB_DATABASE;"
 
-    psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE $PG_DB TO $PG_USER;"
+    psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USERNAME;"
 
 fi
 
 ##
-# configure default nginx server
+# configure nginx servers
 #
-DIR_APP=${DIR_APP////\\/}
-
-sed -i "s/VHOST/$SERVER_NAME/" /etc/nginx/nginx.conf
-sed -i "s/DIRAPP/$DIR_APP/" /etc/nginx/nginx.conf
+sed -i "s/HOST_API/$HOST_API/" /etc/nginx/nginx.conf
+sed -i "s/HOST_APP/$HOST_APP/" /etc/nginx/nginx.conf
 
 ##
 # configure xdebug
@@ -56,12 +54,6 @@ sed -i "s/DIRAPP/$DIR_APP/" /etc/nginx/nginx.conf
 sed -i "s/XDEBUG_HOST/$XDEBUG_HOST/" /etc/php7/conf.d/custom_xdebug.ini
 sed -i "s/XDEBUG_PORT/$XDEBUG_PORT/" /etc/php7/conf.d/custom_xdebug.ini
 sed -i "s/XDEBUG_IDE_KEY/$XDEBUG_IDE_KEY/" /etc/php7/conf.d/custom_xdebug.ini
-
-##
-# disable user and group php-fpm diretives
-#
-sed -i "s/user = nobody/;user = nobody/" /etc/php7/php-fpm.d/www.conf
-sed -i "s/group = nobody/;group = nobody/" /etc/php7/php-fpm.d/www.conf
 
 ##
 # start php and nginx
