@@ -66,10 +66,10 @@ docker build -t web-server:stable .
 ```
 Com a imagem montada podemos rodar o container com o comando do docker `docker run <options> <image>:<image-tag>`. Para as opções desse comando vamos usar estes:
 
-- -d
-- -p | --ports &lt;local-port>:<container-port>
-- --env-file <env-file-path>
-- --name <container-name>
+- `-d`
+- `-p` | `--ports` `<local-port>:<container-port>`
+- `--env-file <env-file-path>`
+- `--name <container-name>`
 
 Um exemplo para rodar o container com a configuração inicial é o camando abaixo:
 
@@ -79,7 +79,7 @@ docker run -d --env-file .env -p 80:8080 --name web-server web-server:stable
 
 Acessando o localhost em seu navegador ou o IP 127.0.0.1 já deverá ser possível ver as informações do PHP que está sendo utilizado geradas pela função `phpinfo();`. Mas para rodar um container com suas aplicações será necessário informar onde elas estão localmente, então vamos usar mais uma opção:
 
-- -v | --volume <local-path>:<container-path>
+- `-v` | `--volume <local-path>:<container-path>`
 
 Um exemplo seria o comando a baixo:
 
@@ -129,7 +129,8 @@ No VScode com a extensão PHP Debug instalada, o arquivo `.vscode/launch.json` d
   }
 ]
 ```
+O padrão é `"pathMappings": { "<container-path>":"<local-path>" }`
 
-PHPStorm
+### PHPStorm PHP Debug
 
 Em breve..
