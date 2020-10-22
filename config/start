@@ -30,7 +30,7 @@ pg_ctl start -D /var/lib/postgresql/data
 #
 echo "#####"
 echo "#"
-echo "Checking PostgreSQL user ..."
+echo "# Checking PostgreSQL user ..."
 if [ "psql -U postgres -c '\du' | awk '/$DB_USERNAME/ { print $1 }'" != "$DB_USERNAME" ]; then
 
     psql -U postgres -c "CREATE USER $DB_USERNAME WITH SUPERUSER ENCRYPTED PASSWORD '$DB_PASSWORD';"
@@ -42,7 +42,7 @@ fi
 #
 echo "#####"
 echo "#"
-echo "Checking PostgreSQL database ..."
+echo "# Checking PostgreSQL database ..."
 if [ "psql -U postgres -t -c 'select datname from pg_database' | awk '/$DB_DATABASE/ { print $1 }'" != "$DB_DATABASE" ]; then
 
     psql -U postgres -c "CREATE DATABASE $DB_DATABASE;"
