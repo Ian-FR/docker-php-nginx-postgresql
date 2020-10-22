@@ -67,7 +67,7 @@ docker build -t web-server:stable .
 Com a imagem montada podemos rodar o container com o comando do docker `docker run <options> <image>:<image-tag>`. Para as opções desse comando vamos usar estes:
 
 - -d
-- -p | --ports <local-port>:<container-port>
+- -p | --ports &lt;local-port>:<container-port>
 - --env-file <env-file-path>
 - --name <container-name>
 
