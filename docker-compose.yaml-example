@@ -3,7 +3,7 @@ services:
   LEPP:
     container_name: web-server
     build: .
-    image: docker-lepp:stable
+    image: docker-web-server-lepp:stable
     env_file:
       - .env
     volumes:

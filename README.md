@@ -27,27 +27,27 @@ Você pode usar essa configuração Docker, como ambiente base no desenvolviment
 └── docker-compose.yaml-example
 ```
 
-É possível usar essa configuração do docker de 2 formas. A primeira é criando uma imagem do dockerfile e então roda-la em um container. A segunda é usar uma configuração do docker-compose para facilitar as configurações necessárias no momento da inicialização do container. Então vamos ver como usar as 2 formas:
+É possível usar essa configuração de 2 formas. A primeira é criando uma imagem do dockerfile e então roda-la em um container. A segunda é usar uma configuração do docker-compose para facilitar as configurações necessárias no momento da inicialização do container. Então vamos ver como usar as 2 formas:
 
-Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para `.env`. Ele já possui uma configuração básica inical para você testar sem ter que alterar qualquer diretiva, mas depois de configurado, será possível servir 3 domínios locais sendo um localhost contendo o resultado da função `phpinfo()`, uma aplicação PHP com domínio local personalizado, e outra aplicação estática. Mas para melhor entendimento aqui está a lista de configurações possíveis do `.env`:
+Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para `.env`. Ele já possui uma configuração básica inical para você testar sem ter que alterar qualquer diretiva, mas depois de configurado, será possível servir 3 domínios locais sendo um localhost contendo o resultado da função `phpinfo()`, uma aplicação PHP com domínio local personalizado, e outra aplicação estática também com domínio personalizado. Mas para melhor entendimento aqui está a lista de configurações possíveis do `.env`:
 
-- `HOST_API` - Domínio local para acessar a aplicação PHP. (Lembre que esse domínio também deve estar no arquivo hosts para consiguir acessa-lo depois pelo navegador)
+- `HOST_API` - Domínio local para acessar a aplicação PHP através do browser ( Esse domínio também deve estar no arquivo hosts do sistema operacional )
 
-- `HOST_APP` - Domínio local para acessar a aplicação estática
+- `HOST_APP` - Domínio local para acessar a aplicação estática através do browser
 
 - `HOST_API_DIR` - Diretório local onde está localizado seu projeto PHP
 
-- `HOST_APP_DIR` - Diretório local onde está localizado sua aplicação estático / frontend
+- `HOST_APP_DIR` - Diretório local onde está localizado sua aplicação estática / frontend
 
-- `HOST_NGINX_PORT` - Porta local que será redirecionada para a porta 8080 do container ( é utilizado um usuário sem privilégios de root no container, por isso o nginx não pode usar a porta 8080 ao invés da pora 80 ) - Opcional pois o padrão será 80
+- `HOST_NGINX_PORT` - Porta local que será redirecionada para a porta 8080 do container ( O container será inicializado com usuário sem privilégios de root, por isso o Nginx está configurado para escutar a 8080 ao invés da porta 80 )
 
-- `HOST_PG_PORT` - Porta local que será redirecionada para a porta 5432 do container ( PostgreSQL ) - Opcional pois o padrão será 5432
+- `HOST_PG_PORT` - Porta local que será redirecionada para a porta 5432 do container ( PostgreSQL )
 
-- `XDEBUG_HOST` - Host remoto que o xdebug escutará ( Geralmente o IPv4 do computador local, mas no windows será mais cômodo usar o IP fixo do adaptador de rede padrão usado pelo Hyper-V )
+- `XDEBUG_HOST` - Host remoto que o xDebug usará para conexão ( IPv4 do computador local na rede atual )
 
-- `XDEBUG_PORT` - Porta remota que o xdebug escutará
+- `XDEBUG_PORT` - Porta remota que o xDebug usará para conexão
 
-- `XDEBUG_IDE_KEY` - Chave da IDE utilizada ( o padrão para o VScode e PHPStorm são vscode e PHPSTORM respectivamente )
+- `XDEBUG_IDE_KEY` - Chave de sessão utilizada para conexão ( o padrão para o VScode e PHPStorm são `vscode` e `PHPSTORM` respectivamente )
 
 - `DB_DATABASE` - Nome da base de dados que o postgres vai criar
 
@@ -55,9 +55,9 @@ Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para
 
 - `DB_PASSWORD` - Senha do usuário que o postgres vai criar
 
-Obs.: A aplicação PHP que chamei de api é a principal aplicação que essa imagem está configurada para servir, então o diretório de trabalho padrão dentro do container será a raiz desse projeto ( /var/projects/api ) e é esperado que o início da aplicação ( index.php ) esteja sob o subdiretório public pois foi configurado pensando na estrutura de arquivos utilizada pelo framework Laravel.
+Obs.: A aplicação PHP que chamei de api é a aplicação padrão que será servida pelo container, então o diretório de trabalho padrão no container será a raiz desse projeto ( /var/projects/api ) e é esperado que o início da aplicação ( index.php ) esteja no subdiretório ./public seguindo a estrutura de arquivos utilizada pelo Laravel Framework.
 
-### Criar imagem e rodar num container
+### Método 1: Criar imagem e rodar num container
 
 Para conseguir rodar essa imagem num container é necessário montar a localmente para depois poder usá-la e para isso usamos o comando do docker `docker build -t <image-name>:<image-tag> <dokerfile-dir>` como o exemplo a baixo:
 
@@ -91,13 +91,13 @@ Note que agora estou passando dois diretórios com a flag -v que vai usar o cont
 
 Agora você já sabe como inicializar um container usando uma imagem montada manualmente, parabéns!
 
-### Usar o docker-compose
+### Método 2: Usar o docker-compose
 
-Se configurar o arquivo .env conforme especificado sobre o título `Detalhes do repositório`, basta usar o comando `docker-compose up -d` para que o container seja inicializado com todas as opções do arquivo .env. Fácil né?! 
+Depois de configurar o arquivo `.env` conforme especificado antes na secão `Detalhes do repositório`, basta usar o comando `docker-compose up -d` para que o container seja inicializado com todas as opções do arquivo .env ... Fácil, não concorda?!
 
 ## Usar os serviços do container no terminal local
 
-Os serviços do container como php, psql, composer e etc poderão ser usados diretamente do seu terminal local usado pela IDE usando o comando `docker exec <options> <container-name> <command>`. Alguns exemplos:
+Os serviços do container como php, psql, composer e etc poderão ser usados diretamente do seu terminal local usado pela IDE com o comando `docker exec <options> <container-name> <command>`. Alguns exemplos:
 
 ```
 docker exec -it web-server php -v
@@ -106,20 +106,20 @@ docker exec -it web-server psql -U postgres
 docker exec -it web-server psql <dbname> <pguser>
 docker exec -it web-server composer install
 ```
-OBS.: A flag -it é usada para informar que o output do comando no terminal local deverá ser interativo, ou seja, deverá se comportar exatamente como se estivesse no console do próprio container.
+OBS.: A flag `-it` é usada para informar que a saída do comando no terminal local deverá ser interativo, ou seja, deverá se comportar exatamente como se estivesse no console do próprio container.
 
-## Configuração do Xdebug na IDE
+## Configuração do xDebug na IDE
 
-Com a diretivas do arquivo .env configuradas, o xdebug vai estar configurado para se conectar ao host remoto, mas para que tudo funcione conforme esperado é necessário configurar a IDE para que seja aberta uma sessão de debug, o Xdebug reconheça isso e aí sim se conectar de fato ao a IDE.
+Com a diretivas do arquivo .env configuradas, o xdebug vai estar configurado para se conectar ao host remoto, mas para que tudo funcione conforme esperado é necessário configurar a IDE para abrir uma sessão de debug quando desejado e o xDebug conseguir estabelecer conexão com a IDE.
 
 ### VSCode PHP Debug
 
-No VScode com a extensão PHP Debug instalada, o arquivo `.vscode/launch.json` deve possuir as propriedades `port` e `pathMappings` que vão ser usadas para criar um server local para debug. Em `port` deve ser configurado a mesma porta configurada no arquivo .env, e em `pathMappings` devem ser informados os diretórios  remoto e local que serão mapeados e possuem a raiz do projeto PHP que queremos debugar.
+No VScode com a extensão PHP Debug instalada, o arquivo `.vscode/launch.json` deve possuir as propriedades `port` e `pathMappings` que vão ser usadas para criar um server local para debug. Em `port` deve ser configurado a mesma porta configurada no arquivo .env, e em `pathMappings` devem ser informados os diretórios remoto e local que serão mapeados com a raiz do projeto PHP.
 
 ```
 "configurations": [
   {
-    "name": "Listen for XDebug",
+    "name": "xDebug",
     "type": "php",
     "request": "launch",
     "port": 9999,
@@ -133,19 +133,27 @@ O padrão é `"pathMappings": { "<container-path>":"<local-path>" }`
 
 ### PHPStorm PHP Debug
 
-No PHPStorm é necessário cadastrar ou alterar um server local de debug e depois informar à IDE para utiliza-lo. Nesse caso com o Projeto aberto no PHPStorm, acesse o menu de debug no canto superior direito e selecione a opção `Edit configurations`, a tela de configurações gerais de debug será aberta.
+No PHPStorm é necessário cadastrar ou alterar um server local de debug para ser usado nas sessões de debug. Nesse caso, com o Projeto aberto no PHPStorm, acesse o menu de debug no canto superior direito e selecione a opção `Edit configurations`, a tela de configurações gerais de debug será aberta.
 
-Primeiro adicione um novo server por clicar no botão `+` no canto superior esquerdo, selecionar o tipo `PHP Remote Debug`, e configurar os campos:
+Clique no botão `+` no canto superior esquerdo, selecione o tipo `PHP Remote Debug`, e configure as opções abaixo:
 - `Name` - Nome do server de debug, padrão é xDebug
-- `Host` - Host que vai usar o server, padrão é 127.0.0.1
-- `Port` - Mesma porta configurada no arquivo .env, padrão 9999
+- `Host` - Host que vai criar a sessão de debug, padrão é 127.0.0.1
+- `Port` - Porta que a sessão de debug escutará, a mesma configurada no arquivo .env
 - `Debugger` - Xdebug
 
-Obs.: É necessário marcar a opção `Use path mappings` para configurar qual diretório local será mapeado para o diretório remoto do container que armazena a raiz do seu projeto PHP.
+Obs.: É necessário marcar a opção `Use path mappings` para mapear o diretório local para o diretório remoto do projeto PHP.
 
-Com o server de debug já cadastrado, na tela de configurações gerais de debug do PHPStorm é possível marcar a opção `Filter debug connection by IDE key`, selecionar o `Server` que apenas foi cadastrado e informar a `IDE Key` que será utilizada na sessão de debug no Xdebug.
+Depois de configurar as opções, na tela de configurações gerais de debug é possível marcar a opção `Filter debug connection by IDE key`, selecionar o `Server` que foi cadastrado e informar a `IDE Key` que será utilizada na sessão de debug no Xdebug, a mesma que foi configurada no arquivo .env.
 
-:coffe: :coffe: :coffe: 
+:coffe: :coffe: :coffe:
+
+### Dicas
+
+Com essa configuração docker você estará desenvolvendo com um ambiente linux, então os arquivos do seu projeto PHP devem obrigatóriamente ter os delimitadores | line endings no padrão unix (LF). Então se você usa o Windows no dia a dia, é importante que configure o git para usar sempre esse padrão por executar o comando abaixo:
+
+```
+git config --global core.autocrlf input
+```
 
 Espero que tenha gostado do conteúdo. Fique a vontade para enviar sugestões, ou entre em cotato comigo:
 
