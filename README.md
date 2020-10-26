@@ -4,6 +4,10 @@ Um único container de aproximadamente 180MB, configurado para servir arquivos e
 
 Agora que já sabe do que se trata, bora pegar um :coffee: e colocar as mãos na maassa
 
+## Instalação Docker
+
+É necessário possuir o docker devidamente instalado, para isso poderá escolher a plataforma utilizada [nessa página](https://docs.docker.com/engine/install/) e seguir os passos da instalação
+
 ## Detalhes do repositório
 
 Você pode usar essa configuração Docker, como ambiente base no desenvolvimento de projetos que utilizem PHP e PostgreSQL. A estrutura de arquivos e pastas está dessa forma:
