@@ -6,7 +6,7 @@ Agora que já sabe do que se trata, bora pegar um :coffee: e colocar as mãos na
 
 ## Instalação Docker
 
-É necessário possuir o docker devidamente instalado, para isso poderá escolher a plataforma utilizada [nessa página](https://docs.docker.com/engine/install/) e seguir os passos da instalação
+É necessário possuir o docker devidamente instalado, para isso poderá escolher a plataforma utilizada [nessa página](https://docs.docker.com/engine/install/) e seguir os passos da instalação. Não esqueça de reiniciar o sistema operacional após a instalação ser concluída.
 
 ## Detalhes do repositório
 
