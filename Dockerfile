@@ -27,10 +27,8 @@ ARG PACKAGES="\
 RUN apk update && \
     apk add --no-cache $PACKAGES && \
     mv /etc/php7/conf.d/xdebug.ini /etc/php7/conf.d/00_xdebug.ini && \
-    sed -i "s/;zend/zend/" /etc/php7/conf.d/00_xdebug.ini && \
-    sed -i "s/user = nobody/;user = nobody/" /etc/php7/php-fpm.d/www.conf && \
-    sed -i "s/group = nobody/;group = nobody/" /etc/php7/php-fpm.d/www.conf && \
-    sed -i "s/127.0.0.1:9000/\/run\/php7\/php-fpm.sock/" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|;zend|zend|" /etc/php7/conf.d/00_xdebug.ini && \
+    sed -i "s|127.0.0.1:9000|/run/php7/php-fpm.sock|" /etc/php7/php-fpm.d/www.conf && \
     rm /etc/nginx/conf.d/default.conf && \
     rm -rf /var/cache/apk/* && \
     mkdir -p /run/nginx && \

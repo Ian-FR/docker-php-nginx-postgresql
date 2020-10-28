@@ -14,13 +14,13 @@ Você pode usar essa configuração Docker, como ambiente base no desenvolviment
 
 ```
 ./
-├── config  # docker configuration files
+├── config  # arquivos de configuração do docker
 │   ├── start
 │   ├── nginx.conf
 │   ├── php.ini
 │   └── xdebug.ini
 │
-├── src     # starter code-bases
+├── src     # base de código inicial
 │   ├── index.html
 │   └── index.php
 │
@@ -97,7 +97,7 @@ Agora você já sabe como inicializar um container usando uma imagem montada man
 
 ### Método 2: Usar o docker-compose
 
-Depois de configurar o arquivo `.env` conforme especificado antes na secão `Detalhes do repositório`, basta usar o comando `docker-compose up -d` para que o container seja inicializado com todas as opções do arquivo .env ... Fácil, não concorda?!
+Depois de configurar o arquivo `.env` conforme especificado antes na secão `Detalhes do repositório`, basta usar o comando `docker-compose up -d` para que o container seja inicializado com todas as opções do arquivo .env ... Fácil, não é?!
 
 ## Usar os serviços do container no terminal local
 
@@ -153,11 +153,39 @@ Depois de configurar as opções, na tela de configurações gerais de debug é 
 
 ### Dicas
 
+#### Git Line endings
+
 Com essa configuração docker você estará desenvolvendo com um ambiente linux, então os arquivos do seu projeto PHP devem obrigatóriamente ter os delimitadores | line endings no padrão unix (LF). Então se você usa o Windows no dia a dia, é importante que configure o git para usar sempre esse padrão por executar o comando abaixo:
 
 ```
 git config --global core.autocrlf input
 ```
+
+#### Xdebug WSL
+
+Caso você esteja usando o WSL 2 no windows, será necessário configurar a diretiva `xdebug.remote_host` sempre que reiniciar o Windows, pois o IP do WSL é alterado toda vez que o Windows é reiniciado. Poderá ser mais cômodo usar um shell script para alterar essa configuração manualmente no container através do WSL. Para isso crie um arquivo com o conteúdo a baixo e torne-o executável:
+
+```bash
+sudo vi /usr/bin/xdebug-conf
+```
+
+```
+IP=`ip route | awk '/src/ { print $9 }'`
+docker exec -it $1 sed -i -E "s|xdebug.remote_host=.+|xdebug.remote_host=$IP|" /etc/php7/conf.d/custom_xdebug.ini
+docker exec -it $1 sed -i -E "s|xdebug.remote_port=.+|xdebug.remote_port=9999|" /etc/php7/conf.d/custom_xdebug.ini
+```
+
+```bash
+sudo chmod +x /usr/bin/xdebug-conf
+```
+
+Feito isso, com o container rodando basta usar o comando `xdebug-conf <container-name>`
+
+```bash
+xdebug-conf web-server
+```
+
+### Contribuir
 
 Espero que tenha gostado do conteúdo. Fique a vontade para enviar sugestões, ou entre em cotato comigo:
 
