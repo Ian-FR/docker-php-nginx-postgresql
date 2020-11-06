@@ -2,8 +2,10 @@ version: "3.8"
 services:
   LEPP:
     container_name: web-server
-    build: .
-    image: docker-web-server-lepp:stable
+    build:
+      context: .
+      dockerfile: ./${PHP_DIR:-php7}/Dockerfile
+    image: web-server:${PHP_DIR:-php7}-nginx-pgsql
     env_file:
       - .env
     volumes:

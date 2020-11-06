@@ -45,9 +45,9 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
     mkdir -p /run/postgresql && \
     mkdir -p /var/lib/postgresql/data
 
-COPY ./config/php8/start /bin/start-server
-COPY ./config/php8/nginx.conf /etc/nginx/nginx.conf
-COPY ./config/php.ini /etc/php8/conf.d/custom_php.ini
+COPY ./php8/config/start /bin/start-server
+COPY ./php8/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./php8/config/php.ini /etc/php8/conf.d/custom_php.ini
 
 RUN addgroup -S -g 1000 www && \
     adduser -S -u 1000 -G www -D www && \

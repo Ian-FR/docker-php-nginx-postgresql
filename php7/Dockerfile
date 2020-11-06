@@ -37,10 +37,10 @@ RUN apk update && \
     mkdir -p /var/lib/postgresql/data && \
     mkdir -p /var/projects
 
-COPY ./config/start /bin/start-server
-COPY ./config/nginx.conf /etc/nginx/nginx.conf
-COPY ./config/php.ini /etc/php7/conf.d/custom_php.ini
-COPY ./config/xdebug.ini /etc/php7/conf.d/custom_xdebug.ini
+COPY ./php7/config/start /bin/start-server
+COPY ./php7/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./php7/config/php.ini /etc/php7/conf.d/custom_php.ini
+COPY ./php7/config/xdebug.ini /etc/php7/conf.d/custom_xdebug.ini
 
 RUN addgroup -S -g 1000 www && \
     adduser -S -u 1000 -G www -D www && \

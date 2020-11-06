@@ -14,19 +14,31 @@ Você pode usar essa configuração Docker, como ambiente base no desenvolviment
 
 ```
 ./
-├── config  # arquivos de configuração do docker
-│   ├── start
-│   ├── nginx.conf
-│   ├── php.ini
-│   └── xdebug.ini
+├── php7/ # arquivos de configuração do docker
+│   ├── config/
+│   │   ├── start
+│   │   ├── nginx.conf
+│   │   ├── php.ini
+│   │   └── xdebug.ini
+│   │
+│   └── Dockerfile
 │
-├── src     # base de código inicial
-│   ├── index.html
-│   └── index.php
+├── php8/ # arquivos de configuração do docker
+│   ├── config/
+│   │   ├── start
+│   │   ├── nginx.conf
+│   │   └── php.ini
+│   │
+│   └── Dockerfile
+│
+├── src/  # base de código inicial
+│   ├── public/
+│   │   └── index.php
+│   │
+│   └── index.html
 │
 ├── .env-example
 ├── .gitignore
-├── Dockerfile
 ├── README.md
 └── docker-compose.yaml-example
 ```
@@ -47,6 +59,8 @@ Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para
 
 - `HOST_PG_PORT` - Porta local que será redirecionada para a porta 5432 do container ( PostgreSQL )
 
+- `PHP_DIR` - Define a versão do PHP que será utilizada php7 ou php8 até o momento
+
 - `XDEBUG_HOST` - Host remoto que o xDebug usará para conexão ( IPv4 do computador local na rede atual )
 
 - `XDEBUG_PORT` - Porta remota que o xDebug usará para conexão
@@ -66,7 +80,8 @@ Obs.: A aplicação PHP que chamei de api é a aplicação padrão que será ser
 Para conseguir rodar essa imagem num container é necessário montar a localmente para depois poder usá-la e para isso usamos o comando do docker `docker build -t <image-name>:<image-tag> <dokerfile-dir>` como o exemplo a baixo:
 
 ```bash
-docker build -t web-server:stable .
+docker build  -t web-server:php7-nginx-pgsql \
+              ./php7
 ```
 Com a imagem montada podemos rodar o container com o comando do docker `docker run <options> <image>:<image-tag>`. Para as opções desse comando vamos usar estes:
 
@@ -78,7 +93,11 @@ Com a imagem montada podemos rodar o container com o comando do docker `docker r
 Um exemplo para rodar o container com a configuração inicial é o camando abaixo:
 
 ```bash
-docker run -d --env-file .env -p 80:8080 --name web-server web-server:stable
+docker run  -d \
+            --env-file .env \
+            -p 80:8080 \
+            --name web-server \
+            web-server:php7-nginx-pgsql
 ```
 
 Acessando o localhost em seu navegador ou o IP 127.0.0.1 já deverá ser possível ver as informações do PHP que está sendo utilizado geradas pela função `phpinfo();`. Mas para rodar um container com suas aplicações será necessário informar onde elas estão localmente, então vamos usar mais uma opção:
@@ -88,7 +107,14 @@ Acessando o localhost em seu navegador ou o IP 127.0.0.1 já deverá ser possív
 Um exemplo seria o comando a baixo:
 
 ```
-docker run -d --env-file .env -v ~/path/to/api-code-base:/var/projects/api -v ~/path/to/app-code-base:/var/projects/app -p 80:8080 -p 5432:5432 --name web-server web-server:stable
+docker run  -d \
+            --env-file .env \
+            -v ~/path/to/api-code-base:/var/projects/api \
+            -v ~/path/to/app-code-base:/var/projects/app \
+            -p 80:8080 \
+            -p 5432:5432 \
+            --name web-server \
+            web-server:php7-nginx-pgsql
 ```
 
 Note que agora estou passando dois diretórios com a flag -v que vai usar o conteúdo do diretório local no diretório remoto do container informado depois do `:`. Além disso também estou usando a flag -p para informar que a porta 5432 local deve ser redirecionada para a porta 5432 remota do container, isso é necessário quando utilizar um SGBD como o PgAdmin 4 para manipular o banco de dados localmente.
