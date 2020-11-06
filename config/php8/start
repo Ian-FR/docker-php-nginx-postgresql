@@ -3,7 +3,7 @@
 ##
 # init PostgreSQL data when not exists
 #
-echo "#####\n# Initializing PostgreSQL data and set up host connections ..."
+echo -e "#####\n# Initializing PostgreSQL data and set up host connections ..."
 if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
 
     echo "postgres" > /var/lib/postgresql/pg.pass
@@ -27,7 +27,7 @@ pg_ctl start -D /var/lib/postgresql/data
 ##
 # create DB_USERNAME
 #
-echo "#####\n# Checking PostgreSQL user ..."
+echo -e "#####\n# Checking PostgreSQL user ..."
 USR=`psql -U postgres -c '\du' | awk '/$DB_USERNAME/ { print $1 }'`
 if [ "$USR" != "$DB_USERNAME" ]; then
 
@@ -38,7 +38,7 @@ fi
 ##
 # create DB_DATABASE
 #
-echo "#####\n# Checking PostgreSQL database ..."
+echo -e "#####\n# Checking PostgreSQL database ..."
 DB=`psql -U postgres -t -c 'select datname from pg_database' | awk '/$DB_DATABASE/ { print $1 }'`
 if [ "$DB" != "$DB_DATABASE" ]; then
 
@@ -66,8 +66,8 @@ sed -i "s|HOST_APP|$HOST_APP|" /etc/nginx/nginx.conf
 ##
 # run compose
 #
-echo -e "#####\n# Installing dependencies ..."
 if [ ! -d /var/projects/api/vendor ]; then
+    echo -e "#####\n# Installing dependencies ..."
     composer install
 fi
 
