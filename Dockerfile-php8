@@ -39,7 +39,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
     php -r "unlink('composer-setup.php');" && \
     rm /etc/nginx/conf.d/default.conf && \
     rm -rf /var/cache/apk/* && \
-    mkdir -p /var/gdoorweb && \
+    mkdir -p /var/projects && \
     mkdir -p /run/nginx && \
     mkdir -p /run/php8 && \
     mkdir -p /run/postgresql && \
@@ -55,7 +55,7 @@ RUN addgroup -S -g 1000 www && \
     chown -R www:www /bin/start-server && \
     chown -R www:www /etc/nginx && \
     chown -R www:www /etc/php8 && \
-    chown -R www:www /var/gdoorweb && \
+    chown -R www:www /var/projects && \
     chown -R www:www /var/lib/nginx && \
     chown -R www:www /var/lib/php8 && \
     chown -R www:www /var/lib/postgresql && \
@@ -64,10 +64,14 @@ RUN addgroup -S -g 1000 www && \
     chown -R www:www /run/php8 && \
     chown -R www:www /run/postgresql
 
-VOLUME [ "/var/lib/postgresql/data" ]
+ADD --chown=www:www ./src/public /var/projects/api/public
+ADD --chown=www:www ./src/public /var/projects/phpinfo
+ADD --chown=www:www ./src/*.html /var/projects/app/
 
-WORKDIR /var/gdoorweb/backend
+WORKDIR /var/projects/api
 
 USER www
+
+VOLUME [ "/var/lib/postgresql/data" ]
 
 ENTRYPOINT [ "start-server" ]

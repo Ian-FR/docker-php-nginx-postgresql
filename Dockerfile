@@ -57,9 +57,9 @@ RUN addgroup -S -g 1000 www && \
     chown -R www:www /run/php7 && \
     chown -R www:www /run/postgresql
 
-ADD --chown=www:www ./src/*.php /var/projects/api/public/
+ADD --chown=www:www ./src/public /var/projects/api/public
+ADD --chown=www:www ./src/public /var/projects/phpinfo
 ADD --chown=www:www ./src/*.html /var/projects/app/
-ADD --chown=www:www ./src/*.php /var/projects/phpinfo/
 
 WORKDIR /var/projects/api
 

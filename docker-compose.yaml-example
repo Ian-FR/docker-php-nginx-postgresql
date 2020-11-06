@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${HOST_API_DIR:-./src}:/var/projects/api
+      - ${HOST_API_DIR:-./src/public}:/var/projects/api
       - ${HOST_APP_DIR:-./src}:/var/projects/app
     ports:
       - "${HOST_NGINX_PORT:-80}:8080"
