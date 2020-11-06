@@ -2,7 +2,7 @@
 
 Um único container de aproximadamente 180MB, configurado para servir arquivos estáticos e aplicações PHP sobre a stack LEPP ( Linux + NGINX + PHP-FPM + PostgreSQL ). Já possui o composer pronto para ser usado no diretório de trabalho e o xdebug habilitado pronto para ser facilmente configurado e utilizado.
 
-Agora que já sabe do que se trata, bora pegar um :coffee: e colocar as mãos na maassa
+Agora que já sabe do que se trata, bora pegar um :coffee: e colocar as mãos na massa!
 
 ## Instalação Docker
 
