@@ -152,7 +152,7 @@ No VScode com a extensão PHP Debug instalada, o arquivo `.vscode/launch.json` d
     "name": "xDebug",
     "type": "php",
     "request": "launch",
-    "port": 9999,
+    "port": 9000,
     "pathMappings": {
       "/var/projects/api":"${workspaceRoot}"
     }
@@ -198,7 +198,7 @@ sudo vi /usr/bin/xdebug-conf
 ```
 IP=`ip route | awk '/src/ { print $9 }'`
 docker exec -it $1 sed -i -E "s|xdebug.remote_host=.+|xdebug.remote_host=$IP|" /etc/php7/conf.d/custom_xdebug.ini
-docker exec -it $1 sed -i -E "s|xdebug.remote_port=.+|xdebug.remote_port=9999|" /etc/php7/conf.d/custom_xdebug.ini
+docker exec -it $1 sed -i -E "s|xdebug.remote_port=.+|xdebug.remote_port=9000|" /etc/php7/conf.d/custom_xdebug.ini
 ```
 
 ```bash
