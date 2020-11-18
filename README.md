@@ -192,17 +192,20 @@ git config --global core.autocrlf input
 Caso você esteja usando o WSL 2 no windows, será necessário configurar a diretiva `xdebug.remote_host` sempre que reiniciar o Windows, pois o IP do WSL é alterado toda vez que o Windows é reiniciado. Poderá ser mais cômodo usar um shell script para alterar essa configuração manualmente no container através do WSL. Para isso crie um arquivo com o conteúdo a baixo e torne-o executável:
 
 ```bash
-sudo vi /usr/bin/xdebug-conf
+sudo vi /bin/xdebug-conf
 ```
 
 ```
-IP=`ip route | awk '/src/ { print $9 }'`
-docker exec -it $1 sed -i -E "s|xdebug.remote_host=.+|xdebug.remote_host=$IP|" /etc/php7/conf.d/custom_xdebug.ini
-docker exec -it $1 sed -i -E "s|xdebug.remote_port=.+|xdebug.remote_port=9000|" /etc/php7/conf.d/custom_xdebug.ini
+IP=`ip route | awk '/default/ { print $3 }'`
+docker exec -it $1 sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$IP|" /etc/php7/conf.d/custom_xdebug.ini
+docker exec -it $1 sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=9000|" /etc/php7/conf.d/custom_xdebug.ini
+docker exec -it $1 sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=vscode|" /etc/php7/conf.d/custom_xdebug.ini
+docker exec -it $1 rm /run/php7/php-fpm.sock
+docker exec -it $1 php-fpm7
 ```
 
 ```bash
-sudo chmod +x /usr/bin/xdebug-conf
+sudo chmod +x /bin/xdebug-conf
 ```
 
 Feito isso, com o container rodando basta usar o comando `xdebug-conf <container-name>`

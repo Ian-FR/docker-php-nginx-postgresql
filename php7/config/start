@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 ##
 # init PostgreSQL data when not exists
 #
@@ -18,11 +19,13 @@ if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
 
 fi
 
+
 ##
 # start postgreSQL and set default postgres password
 #
 echo -e "#####\n# Starting postgresql ..."
 pg_ctl start -D /var/lib/postgresql/data
+
 
 ##
 # create DB_USERNAME
@@ -34,6 +37,7 @@ if [ "$USR" != "$DB_USERNAME" ]; then
     psql -U postgres -c "CREATE USER $DB_USERNAME WITH SUPERUSER ENCRYPTED PASSWORD '$DB_PASSWORD';"
     
 fi
+
 
 ##
 # create DB_DATABASE
@@ -48,6 +52,7 @@ if [ "$DB" != "$DB_DATABASE" ]; then
 
 fi
 
+
 ##
 # configure nginx servers
 #
@@ -55,27 +60,31 @@ echo -e "#####\n# Setting up nginx servers ..."
 sed -i "s|HOST_API|$HOST_API|" /etc/nginx/nginx.conf
 sed -i "s|HOST_APP|$HOST_APP|" /etc/nginx/nginx.conf
 
+
 ##
 # configure xdebug
 #
 echo -e "#####\n# Setting up Xdebug ..."
-sed -i -E "s|xdebug.remote_host=.+|xdebug.remote_host=$XDEBUG_HOST|" /etc/php7/conf.d/custom_xdebug.ini
-sed -i -E "s|xdebug.remote_port=.+|xdebug.remote_port=$XDEBUG_PORT|" /etc/php7/conf.d/custom_xdebug.ini
-sed -i -E "s|xdebug.idekey=.+|xdebug.idekey=$XDEBUG_IDE_KEY|" /etc/php7/conf.d/custom_xdebug.ini
+sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$XDEBUG_HOST|" /etc/php7/conf.d/custom_xdebug.ini
+sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=$XDEBUG_PORT|" /etc/php7/conf.d/custom_xdebug.ini
+sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=$XDEBUG_IDE_KEY|" /etc/php7/conf.d/custom_xdebug.ini
 
-##
-# run compose
-#
-echo -e "#####\n# Installing dependencies ..."
-if [ ! -d /var/projects/api/vendor ]; then
-    composer install
-fi
 
 ##
 # start php-fpm
 #
 echo -e "#####\n# Starting php ..."
 php-fpm7
+
+
+#
+# run composer
+#
+echo -e "#####\n# Installing dependencies ..."
+if [ ! -d /var/projects/api/vendor ]; then
+    composer install
+fi#
+
 
 ##
 # start nginx
