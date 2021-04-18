@@ -14,16 +14,14 @@ Você pode usar essa configuração Docker, como ambiente de desenvolvimento em 
 
 ```
 ./
-├── config/               # arquivos de configuração do docker
-│   ├── php7/
-│   │   └── DockerFile
+├── php/               # arquivos de configuração do docker
+│   ├── config/
+│   │   ├── nginx.conf
+│   │   ├── php.ini
+│   │   └── start
 │   │
-│   ├── php8/
-│   │   └── DockerFile
-│   │
-│   ├── nginx.conf
-│   ├── php.ini
-│   └── start
+│   ├── DockerFile-php7
+│   └── DockerFile-php8
 │
 ├── src/                  # base de código inicial
 │   ├── public/
