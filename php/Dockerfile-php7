@@ -1,17 +1,19 @@
-FROM alpine:edge
+FROM alpine:3.13
 
 LABEL MAINTAINER Ian-FR <iiaan.fr@gmail.com>
 
 ARG PACKAGES="\
+              composer \
               nginx \
               postgresql \
-              composer \
               php7-bcmath \
               php7-curl \
               php7-dom \
               php7-fileinfo \
               php7-fpm \
               php7-gd \
+              php7-mbstring \
+              php7-openssl \
               php7-pdo \
               php7-pdo_pgsql \
               php7-pgsql \
@@ -19,28 +21,24 @@ ARG PACKAGES="\
               php7-simplexml \
               php7-soap \
               php7-tokenizer \
-              php7-xdebug \
+              php7-pecl-xdebug \
               php7-xml \
               php7-xmlwriter \
               php7-zip "
 
 RUN apk update && \
     apk add --no-cache $PACKAGES && \
-    mv /etc/php7/conf.d/xdebug.ini /etc/php7/conf.d/00_xdebug.ini && \
-    sed -i "s|;zend|zend|" /etc/php7/conf.d/00_xdebug.ini && \
-    sed -i "s|127.0.0.1:9000|/run/php7/php-fpm.sock|" /etc/php7/php-fpm.d/www.conf && \
     rm /etc/nginx/conf.d/default.conf && \
     rm -rf /var/cache/apk/* && \
+    mkdir -p /var/projects && \
     mkdir -p /run/nginx && \
     mkdir -p /run/php7 && \
     mkdir -p /run/postgresql && \
-    mkdir -p /var/lib/postgresql/data && \
-    mkdir -p /var/projects
+    mkdir -p /var/lib/postgresql/data
 
-COPY ./php7/config/start /bin/start-server
-COPY ./php7/config/nginx.conf /etc/nginx/nginx.conf
-COPY ./php7/config/php.ini /etc/php7/conf.d/custom_php.ini
-COPY ./php7/config/xdebug.ini /etc/php7/conf.d/custom_xdebug.ini
+COPY ./php/config/start /bin/start-server
+COPY ./php/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./php/config/php.ini /etc/php7/conf.d/custom_php.ini
 
 RUN addgroup -S -g 1000 www && \
     adduser -S -u 1000 -G www -D www && \

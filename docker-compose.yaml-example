@@ -4,7 +4,7 @@ services:
     container_name: web-server
     build:
       context: .
-      dockerfile: ./${PHP_DIR:-php7}/Dockerfile
+      dockerfile: ./php/Dockerfile-${PHP_DIR:-php7}
     image: web-server:${PHP_DIR:-php7}-nginx-pgsql
     env_file:
       - .env

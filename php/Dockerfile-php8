@@ -1,11 +1,11 @@
-FROM alpine:edge
+FROM alpine:3.13
 
 LABEL MAINTAINER = "Ian-FR <iiaan.fr@gmail.com>"
 
 ARG PACKAGES="\
+              composer \
               nginx \
               postgresql \
-              php8 \
               php8-bcmath \
               php8-curl \
               php8-dom \
@@ -17,26 +17,17 @@ ARG PACKAGES="\
               php8-pdo \
               php8-pdo_pgsql \
               php8-pgsql \
-              php8-phar \
               php8-session \
               php8-simplexml \
               php8-soap \
               php8-tokenizer \
+              php8-pecl-xdebug \
               php8-xml \
               php8-xmlwriter \
               php8-zip "
 
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    apk update && \
+RUN apk update && \
     apk add --no-cache $PACKAGES && \
-    mv /usr/bin/php8 /usr/bin/php && \
-    mv /usr/bin/phar8 /usr/bin/phar && \
-    mv /usr/bin/phar.phar8 /usr/bin/phar.phar && \
-    sed -i "s|127.0.0.1:9000|/run/php8/php-fpm.sock|" /etc/php8/php-fpm.d/www.conf && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === 'c31c1e292ad7be5f49291169c0ac8f683499edddcfd4e42232982d0fd193004208a58ff6f353fde0012d35fdd72bc394') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=bin --filename=composer && \
-    php -r "unlink('composer-setup.php');" && \
     rm /etc/nginx/conf.d/default.conf && \
     rm -rf /var/cache/apk/* && \
     mkdir -p /var/projects && \
@@ -45,9 +36,9 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
     mkdir -p /run/postgresql && \
     mkdir -p /var/lib/postgresql/data
 
-COPY ./php8/config/start /bin/start-server
-COPY ./php8/config/nginx.conf /etc/nginx/nginx.conf
-COPY ./php8/config/php.ini /etc/php8/conf.d/custom_php.ini
+COPY ./php/config/start /bin/start-server
+COPY ./php/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./php/config/php.ini /etc/php8/conf.d/custom_php.ini
 
 RUN addgroup -S -g 1000 www && \
     adduser -S -u 1000 -G www -D www && \

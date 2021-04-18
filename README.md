@@ -10,28 +10,22 @@ Agora que já sabe do que se trata, bora pegar um :coffee: e colocar as mãos na
 
 ## Detalhes do repositório
 
-Você pode usar essa configuração Docker, como ambiente base no desenvolvimento de projetos que utilizem PHP e PostgreSQL. A estrutura de arquivos e pastas está dessa forma:
+Você pode usar essa configuração Docker, como ambiente de desenvolvimento em projetos que utilizem PHP e PostgreSQL. A estrutura de arquivos e pastas está da seguinte forma:
 
 ```
 ./
-├── php7/ # arquivos de configuração do docker
-│   ├── config/
-│   │   ├── start
-│   │   ├── nginx.conf
-│   │   ├── php.ini
-│   │   └── xdebug.ini
+├── config/               # arquivos de configuração do docker
+│   ├── php7/
+│   │   └── DockerFile
 │   │
-│   └── Dockerfile
-│
-├── php8/ # arquivos de configuração do docker
-│   ├── config/
-│   │   ├── start
-│   │   ├── nginx.conf
-│   │   └── php.ini
+│   ├── php8/
+│   │   └── DockerFile
 │   │
-│   └── Dockerfile
+│   ├── nginx.conf
+│   ├── php.ini
+│   └── start
 │
-├── src/  # base de código inicial
+├── src/                  # base de código inicial
 │   ├── public/
 │   │   └── index.php
 │   │
@@ -39,13 +33,13 @@ Você pode usar essa configuração Docker, como ambiente base no desenvolviment
 │
 ├── .env-example
 ├── .gitignore
-├── README.md
-└── docker-compose.yaml-example
+├── docker-compose.yaml-example
+└── README.md
 ```
 
 É possível usar essa configuração de 2 formas. A primeira é criando uma imagem do dockerfile e então roda-la em um container. A segunda é usar uma configuração do docker-compose para facilitar as configurações necessárias no momento da inicialização do container. Então vamos ver como usar as 2 formas:
 
-Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para `.env`. Ele já possui uma configuração básica inical para você testar sem ter que alterar qualquer diretiva, mas depois de configurado, será possível servir 3 domínios locais sendo um localhost contendo o resultado da função `phpinfo()`, uma aplicação PHP com domínio local personalizado, e outra aplicação estática também com domínio personalizado. Mas para melhor entendimento aqui está a lista de configurações possíveis do `.env`:
+Antes de mais nada, renomeie o arquivo `.env-example` na raiz do diretório para `.env`. Ele já possui uma configuração básica inicial para você testar sem ter que alterar qualquer diretiva, mas depois de configurado, será possível servir 3 domínios locais sendo um localhost contendo o resultado da função `phpinfo()`, uma aplicação PHP com domínio local personalizado, e outra aplicação estática também com domínio personalizado. Mas para melhor entendimento aqui está a lista de configurações possíveis do `.env`:
 
 - `HOST_API` - Domínio local para acessar a aplicação PHP através do browser ( Esse domínio também deve estar no arquivo hosts do sistema operacional )
 
@@ -90,7 +84,7 @@ Com a imagem montada podemos rodar o container com o comando do docker `docker r
 - `--env-file <env-file-path>`
 - `--name <container-name>`
 
-Um exemplo para rodar o container com a configuração inicial é o camando abaixo:
+Um exemplo para rodar o container com a configuração inicial é o comando abaixo:
 
 ```bash
 docker run  -d \
@@ -123,7 +117,7 @@ Agora você já sabe como inicializar um container usando uma imagem montada man
 
 ### Método 2: Usar o docker-compose
 
-Depois de configurar o arquivo `.env` conforme especificado antes na secão `Detalhes do repositório`, basta usar o comando `docker-compose up -d` para que o container seja inicializado com todas as opções do arquivo .env ... Fácil, não é?!
+Depois de configurar o arquivo `.env` conforme especificado antes na seção `Detalhes do repositório`, basta usar o comando `docker-compose up -d` para que o container seja inicializado com todas as opções do arquivo .env ... Fácil, não é?!
 
 ## Usar os serviços do container no terminal local
 
@@ -175,7 +169,7 @@ Obs.: É necessário marcar a opção `Use path mappings` para mapear o diretór
 
 Depois de configurar as opções, na tela de configurações gerais de debug é possível marcar a opção `Filter debug connection by IDE key`, selecionar o `Server` que foi cadastrado e informar a `IDE Key` que será utilizada na sessão de debug no Xdebug, a mesma que foi configurada no arquivo .env.
 
-:coffe: :coffe: :coffe:
+☕ ☕ ☕
 
 ### Dicas
 
@@ -197,9 +191,9 @@ sudo vi /bin/xdebug-conf
 
 ```
 IP=`ip route | awk '/default/ { print $3 }'`
-docker exec -it $1 sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$IP|" /etc/php7/conf.d/custom_xdebug.ini
-docker exec -it $1 sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=9000|" /etc/php7/conf.d/custom_xdebug.ini
-docker exec -it $1 sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=vscode|" /etc/php7/conf.d/custom_xdebug.ini
+docker exec -it $1 sed -i -E "s|xdebug.client_host=?.+|xdebug.client_host=$IP|" /etc/$PHP_DIR/conf.d/custom_php.ini
+docker exec -it $1 sed -i -E "s|xdebug.client_port=?.+|xdebug.client_port=9000|" /etc/$PHP_DIR/conf.d/custom_php.ini
+docker exec -it $1 sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=vscode|" /etc/$PHP_DIR/conf.d/custom_php.init
 docker exec -it $1 rm /run/php7/php-fpm.sock
 docker exec -it $1 php-fpm7
 ```
@@ -216,8 +210,8 @@ xdebug-conf web-server
 
 ### Contribuir
 
-Espero que tenha gostado do conteúdo. Fique a vontade para enviar sugestões, ou entre em cotato comigo:
+Espero que tenha gostado do conteúdo. Fique a vontade para enviar sugestões, ou entre em contato comigo:
 
 - E-mail: `iiaan.fr@gmail.com`
 
-:smile: :smile: :smile:
+😄 😄 😄

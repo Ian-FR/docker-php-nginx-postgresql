@@ -1,0 +1,101 @@
+#!/bin/sh
+
+
+##
+# init PostgreSQL data when not exists
+#
+echo -e "#####\n# Initializing PostgreSQL data and set up host connections ..."
+if [ ! -f "/var/lib/postgresql/data/PG_VERSION" ]; then
+
+    echo "postgres" > /var/lib/postgresql/pg.pass
+
+    initdb -D /var/lib/postgresql/data --username=postgres --pwfile=/var/lib/postgresql/pg.pass
+
+    rm /var/lib/postgresql/pg.pass
+
+    echo "host all all all md5" >> /var/lib/postgresql/data/pg_hba.conf
+
+    sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /var/lib/postgresql/data/postgresql.conf
+
+fi
+
+
+##
+# start postgreSQL and set default postgres password
+#
+echo -e "#####\n# Starting postgresql ..."
+pg_ctl start -D /var/lib/postgresql/data
+
+
+##
+# create PG_DB_USERNAME
+#
+echo -e "#####\n# Checking PostgreSQL user ..."
+USR=`psql -U postgres -c '\du' | awk '/$PG_DB_USERNAME/ { print $1 }'`
+if [ "$USR" != "$PG_DB_USERNAME" ]; then
+
+    psql -U postgres -c "CREATE USER $PG_DB_USERNAME WITH SUPERUSER ENCRYPTED PASSWORD '$PG_DB_PASSWORD';"
+
+fi
+
+
+##
+# create PG_DB_DATABASE
+#
+echo -e "#####\n# Checking PostgreSQL database ..."
+DB=`psql -U postgres -t -c 'select datname from pg_database' | awk '/$PG_DB_DATABASE/ { print $1 }'`
+if [ "$DB" != "$PG_DB_DATABASE" ]; then
+
+    psql -U postgres -c "CREATE DATABASE $PG_DB_DATABASE;"
+
+    psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE $PG_DB_DATABASE TO $PG_DB_USERNAME;"
+
+fi
+
+
+##
+# configure nginx servers
+#
+echo -e "#####\n# Setting up nginx servers ..."
+sed -i "s|HOST_API|$HOST_API|" /etc/nginx/nginx.conf
+sed -i "s|HOST_APP|$HOST_APP|" /etc/nginx/nginx.conf
+sed -i "s|PHP_DIR|$PHP_DIR|" /etc/nginx/nginx.conf
+
+
+##
+# configure xdebug
+#
+echo -e "#####\n# Setting up Xdebug ..."
+sed -i "s/;zend/zend/" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$XDEBUG_HOST|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=$XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.client_host=?.+|xdebug.client_host=$DOCKER_XDEBUG_HOST|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.client_port=?.+|xdebug.client_port=$DOCKER_XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=$XDEBUG_IDE_KEY|" /etc/$PHP_DIR/conf.d/custom_php.init
+
+
+#
+# run composer
+#
+echo -e "#####\n# Installing dependencies ..."
+if [ ! -d /var/projects/api/vendor ]; then
+    composer install
+fi
+
+
+##
+# start php and nginx
+#
+echo "#####\n# Starting PHP and NGINX"
+sed -i "s/127.0.0.1:9000/\/run\/$PHP_DIR\/php-fpm.sock/" /etc/$PHP_DIR/php-fpm.d/www.conf
+sed -i -E "s|;clear_env = no|clear_env = no|" /etc/$PHP_DIR/php-fpm.d/www.conf
+
+if [ $PHP_DIR == php7 ]; then
+  php-fpm7 &
+fi
+
+if [ $PHP_DIR == php8 ]; then
+  php-fpm8 &
+fi
+
+nginx
