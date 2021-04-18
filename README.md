@@ -189,11 +189,11 @@ sudo vi /bin/xdebug-conf
 
 ```
 IP=`ip route | awk '/default/ { print $3 }'`
-docker exec -it $1 sed -i -E "s|xdebug.client_host=?.+|xdebug.client_host=$IP|" /etc/$PHP_DIR/conf.d/custom_php.ini
-docker exec -it $1 sed -i -E "s|xdebug.client_port=?.+|xdebug.client_port=9000|" /etc/$PHP_DIR/conf.d/custom_php.ini
-docker exec -it $1 sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=vscode|" /etc/$PHP_DIR/conf.d/custom_php.init
-docker exec -it $1 rm /run/php7/php-fpm.sock
-docker exec -it $1 php-fpm7
+docker exec -it $1 sed -i -E "s|xdebug.client_host=?.+|xdebug.client_host=$IP|" /etc/php8/conf.d/custom_php.ini
+docker exec -it $1 sed -i -E "s|xdebug.client_port=?.+|xdebug.client_port=9000|" /etc/php8/conf.d/custom_php.ini
+docker exec -it $1 sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=vscode|" /etc/php8/conf.d/custom_php.init
+docker exec -it $1 rm /run/php8/php-fpm.sock
+docker exec -it $1 php-fpm8
 ```
 
 ```bash
