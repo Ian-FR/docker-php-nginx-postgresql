@@ -67,11 +67,11 @@ sed -i "s|PHP_DIR|$PHP_DIR|" /etc/nginx/nginx.conf
 #
 echo -e "#####\n# Setting up Xdebug ..."
 sed -i "s/;zend/zend/" /etc/$PHP_DIR/conf.d/custom_php.ini
-sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$XDEBUG_HOST|" /etc/$PHP_DIR/conf.d/custom_php.ini
-sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=$XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$DOCKER_XDEBUG_HOST|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=$DOCKER_XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
 sed -i -E "s|xdebug.client_host=?.+|xdebug.client_host=$DOCKER_XDEBUG_HOST|" /etc/$PHP_DIR/conf.d/custom_php.ini
 sed -i -E "s|xdebug.client_port=?.+|xdebug.client_port=$DOCKER_XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
-sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=$XDEBUG_IDE_KEY|" /etc/$PHP_DIR/conf.d/custom_php.init
+sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=$DOCKER_XDEBUG_IDE_KEY|" /etc/$PHP_DIR/conf.d/custom_php.init
 
 
 #
