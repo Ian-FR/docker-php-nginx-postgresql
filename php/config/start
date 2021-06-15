@@ -71,6 +71,8 @@ sed -i -E "s|xdebug.remote_host=?.+|xdebug.remote_host=$DOCKER_XDEBUG_HOST|" /et
 sed -i -E "s|xdebug.remote_port=?.+|xdebug.remote_port=$DOCKER_XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
 sed -i -E "s|xdebug.client_host=?.+|xdebug.client_host=$DOCKER_XDEBUG_HOST|" /etc/$PHP_DIR/conf.d/custom_php.ini
 sed -i -E "s|xdebug.client_port=?.+|xdebug.client_port=$DOCKER_XDEBUG_PORT|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.remote_log=?.+|xdebug.remote_log=/var/log/$PHP_DIR/xdebug.log|" /etc/$PHP_DIR/conf.d/custom_php.ini
+sed -i -E "s|xdebug.log=?.+|xdebug.log=/var/log/$PHP_DIR/xdebug.log|" /etc/$PHP_DIR/conf.d/custom_php.ini
 sed -i -E "s|xdebug.idekey=?.+|xdebug.idekey=$DOCKER_XDEBUG_IDE_KEY|" /etc/$PHP_DIR/conf.d/custom_php.init
 
 
